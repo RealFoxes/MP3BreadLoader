@@ -1,0 +1,17 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Список звуков";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Список звуков</h1>
+    <p>Здесь вы можете посмотреть список текущих звуков, а также удалить их</p>
+</div>
+
+<div id="sounds" class="sounds row">
+    <div class="play col-3"><button type="button" class="btn btn-primary">Primary</button><div>
+</div>
+<script>
+    loadSounds();
+</script>
