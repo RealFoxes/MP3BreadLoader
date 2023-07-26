@@ -36,3 +36,18 @@ function loadAudio(id) {
     `
     $(`#sounds #${id} .play`).html(html);
 }
+
+function deleteAudio(id) {
+    const confirmed = window.confirm('Вы уверены что хотите удалить звук?');
+    if (confirmed) {
+        $.ajax({
+            url: apiBasePath + "api/audiocontent/" + id,
+            type: 'DELETE',
+            dataType: 'json',
+            complete: function (res) {
+                $("#sounds").html('');
+                loadSounds();
+            }
+        });
+    }
+}

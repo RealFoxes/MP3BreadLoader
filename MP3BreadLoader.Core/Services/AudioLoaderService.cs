@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using MP3BreadLoader.Core.Services;
 using MP3BreadLoader.Models;
 using Newtonsoft.Json;
 using System;
@@ -7,18 +8,21 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MP3BreadLoader.Controllers
+namespace MP3BreadLoader.Core.Services
 {
 	public class AudioLoaderService
 	{
+		private readonly AudioHandlerService audioHandlerService;
 		private AudioConfigModel audioConfigModel;
 		private readonly string earWaxBasePath;
 		private readonly string audioConfigPath;
 		private const string audioRelativePath = "EarwaxAudio/Audio/";
 		private const string audioSpectrumRelativePath = "EarwaxAudio/Spectrum/";
 
-		public AudioLoaderService(IConfiguration configuration)
+		public AudioLoaderService(IConfiguration configuration, AudioHandlerService audioHandlerService)
 		{
+			this.audioHandlerService = audioHandlerService;
+
 			earWaxBasePath = configuration.GetValue<string>("JackboxEarwaxContentPath");
 			audioConfigPath = earWaxBasePath + "EarwaxAudio.jet";
 			var rawJson = File.ReadAllText(audioConfigPath);
@@ -35,13 +39,18 @@ namespace MP3BreadLoader.Controllers
 			var fullPath = earWaxBasePath + audioRelativePath + id + ".ogg";
 			File.WriteAllBytes(fullPath, audioOgg);
 
+			var frequenciesData = audioHandlerService.ProcessOggFile(audioOgg);
+			var rawJson = JsonConvert.SerializeObject(frequenciesData, Formatting.Indented);
+			var frequenciesFullPath = earWaxBasePath + audioSpectrumRelativePath + id + ".jet";
+			File.WriteAllText(frequenciesFullPath, rawJson);
+
 			var audioConfigContent = new AudioConfigContentModel();
 			audioConfigContent.Id = id;
 			audioConfigContent.Name = audioName;
 			audioConfigContent.Short = audioShortName;
 			audioConfigContent.IsFamilyFilter = isFamilyFilter;
 			audioConfigContent.Categories = new List<string> { "household" };
-
+			audioConfigModel.Content.Add(audioConfigContent);
 
 			UpdateConfig();
 		}
@@ -59,6 +68,11 @@ namespace MP3BreadLoader.Controllers
 			if (!File.Exists(fullPath))
 				throw new FileNotFoundException();
 			File.Delete(fullPath);
+
+			var frequenciesFullPath = earWaxBasePath + audioSpectrumRelativePath + id + ".jet";
+			if (!File.Exists(frequenciesFullPath))
+				throw new FileNotFoundException();
+			File.Delete(frequenciesFullPath);
 
 			var item = audioConfigModel.Content.Single(x => x.Id == id);
 			audioConfigModel.Content.Remove(item);
@@ -78,7 +92,7 @@ namespace MP3BreadLoader.Controllers
 		}
 		private void UpdateConfig()
 		{
-			var rawJson = JsonConvert.SerializeObject(audioConfigModel);
+			var rawJson = JsonConvert.SerializeObject(audioConfigModel, Formatting.Indented);
 			File.WriteAllText(audioConfigPath, rawJson);
 		}
 	}

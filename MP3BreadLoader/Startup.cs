@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MP3BreadLoader.Controllers;
+using MP3BreadLoader.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +26,7 @@ namespace MP3BreadLoader
 		{
 			services.AddRazorPages();
 			services.AddTransient<AudioLoaderService>();
+			services.AddTransient<AudioHandlerService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

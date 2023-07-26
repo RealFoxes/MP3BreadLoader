@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MP3BreadLoader.Core.Services;
 using MP3BreadLoader.Models;
 using System;
 using System.Collections.Generic;
@@ -31,22 +32,8 @@ namespace MP3BreadLoader.Controllers
 			return File(audio, "audio/ogg", $"{id}.ogg");
 		}
 
-		// POST api/<AudioContentController>
-		[HttpPost]
-		public void Post([FromBody] string value)
-		{
-		}
-
-		// PUT api/<AudioContentController>/5
-		[HttpPut("{id}")]
-		public void Put(int id, [FromBody] string value)
-		{
-		}
-
 		// DELETE api/<AudioContentController>/5
 		[HttpDelete("{id}")]
-		public void Delete(int id)
-		{
-		}
+		public void Delete(int id) => audioLoaderService.DeleteAudio(id);
 	}
 }
