@@ -39,7 +39,7 @@ namespace MP3BreadLoader.Core.Services
 			var fullPath = earWaxBasePath + audioRelativePath + id + ".ogg";
 			File.WriteAllBytes(fullPath, audioOgg);
 
-			var frequenciesData = audioHandlerService.ProcessOggFile(audioOgg);
+			var frequenciesData = audioHandlerService.GetFrequenciesData(audioOgg);
 			var rawJson = JsonConvert.SerializeObject(frequenciesData, Formatting.Indented);
 			var frequenciesFullPath = earWaxBasePath + audioSpectrumRelativePath + id + ".jet";
 			File.WriteAllText(frequenciesFullPath, rawJson);

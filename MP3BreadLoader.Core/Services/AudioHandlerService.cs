@@ -12,11 +12,8 @@ namespace MP3BreadLoader.Core.Services
 	public class AudioHandlerService
 	{
         private const int refresh = 23;
-		public AudioHandlerService()
-		{
-            
-        }
-        public FrequenciesDataModel ProcessOggFile(byte[] fileBytes)
+
+        public FrequenciesDataModel GetFrequenciesData(byte[] fileBytes)
         {
             var frequenciesChannels = new List<FrequenciesChannelsModel>();
             using (MemoryStream memoryStream = new MemoryStream(fileBytes))
